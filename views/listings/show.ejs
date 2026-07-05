@@ -1,0 +1,34 @@
+<% layout('layouts/boilerplate') %>
+
+<body>
+    <div class="row mt-4">
+        <div class="col-md-6 offset-md-3">
+            <h3 class="fw-bold mb-3">Listing Details</h3>
+            
+            <div class="card listing-card shadow-sm h-100">
+                <img src="<%= data.image.url %>" class="card-img-top" alt="Listing Image" style="height: 30rem; object-fit: cover;">
+                
+                <div class="card-body px-0 py-3">
+                    <h4 class="card-title fw-bold text-dark mb-2"><%= data.title %></h4>
+                    <p class="card-text text-muted mb-3"><%= data.description %></p>
+                    
+                    <p class="card-text mb-1">
+                        <span class="fw-bold text-dark">Price:</span> $<%= data.price.toLocaleString("en-US") %>
+                    </p>
+                    <p class="card-text">
+                        <span class="fw-bold text-dark">Location:</span> <%= data.location %>, <%= data.country %>
+                    </p>
+
+                    <div class="d-flex gap-3 mt-4">
+                        <a href="/listings/<%= data._id %>/edit" class="btn btn-dark px-4 py-2 fw-semibold">Edit Listing</a>
+                        
+                        <form action="/listings/<%= data._id %>?_method=DELETE" method="POST" class="m-0">
+                            <button type="submit" class="btn btn-danger px-4 py-2 fw-semibold">Delete Listing</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
