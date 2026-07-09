@@ -18,5 +18,24 @@
        
       </ul>
     </div>
+    <div class="collapse navbar-collapse  border-bottom" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <% if(!currUser) { %>
+          
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page" href="/login">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/signup">Signup</a>
+        </li>
+        <% } else %>
+         <% if(currUser) { %>
+        <li class="nav-item">
+          <a class="nav-link" href="/logout">Logout</a>
+        </li>
+        <% } %>
+       
+      </ul>
+    </div>
   </div>
 </nav>
