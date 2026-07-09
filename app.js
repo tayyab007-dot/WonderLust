@@ -83,18 +83,6 @@ app.use("/listings", listingsRouter);
 app.use("/listings/:id/reviews", reviewsRouter);
 app.use("/", userRouter);
 
-// app.get("/testListing", async(req, res) => {
-//     let sampleListing = new Listing({
-//         title: "Sample Listing",
-//         description: "This is a sample listing",
-//         image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
-//         price: 100,
-//         location: "Sample Location",
-//         country: "Sample Country"
-//     });
-//     await sampleListing.save();
-//     res.send("Listing saved");
-// });
 
 app.all(/.*/, (req, res, next) => {
   next(new ExpressError(404, "Page Not Found"));

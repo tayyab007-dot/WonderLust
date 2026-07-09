@@ -27,6 +27,7 @@
                             <%= data.location %>, <%= data.country %>
                         </p>
 
+                        <% if(currUser && currUser._id.equals(data.owner._id)) { %>
                         <div class="d-flex gap-3 mt-4">
                             <a href="/listings/<%= data._id %>/edit" class="btn btn-dark px-4 py-2 fw-semibold">Edit
                                 Listing</a>
@@ -36,10 +37,12 @@
                                     Listing</button>
                             </form>
                         </div>
+                        <% } %>
 
                         <hr />
 
                         <div class="mb-5">
+                            <% if(currUser) { %>
                             <h4 class="fw-bold mb-3">Leave a Review</h4>
                             <form action="/listings/<%= data._id %>/reviews" method="POST" novalidate
                                 class="needs-validation">
@@ -75,7 +78,7 @@
                                         <% for(let review of data.reviews) { %>
                                             <div class="card col-5 ms-3 mb-3 shadow-sm border-light">
                                                 <div class="card-body">
-                                                    <h5 class="card-title fw-semibold">Jane Doe</h5>
+                                                    <h5 class="card-title fw-semibold">@<%= review.author.username %></h5>
                                                     <p class="card-text mb-1">
                                                         <%= review.comment %>
                                                     </p>
@@ -92,6 +95,7 @@
                                             <% } %>
                                                 <% } %>
                             </div>
+                            <% } %>
                         </div>
 
                     </div>
