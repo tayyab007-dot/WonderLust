@@ -12,7 +12,7 @@
                         style="height: 30rem; object-fit: cover;">
 
                     <div class="card-body px-0 py-3">
-                        <p class="card-text text-muted mb-3">Owned by: <i><%= data.owner.username %></i></p>
+                       <p class="card-text text-muted mb-3">Owned by: <i><%= data.owner?.username || "anonymous" %></i></p>
                         
                         <!-- <h4 class="card-title fw-bold text-dark mb-2"></h4> -->
                         <p class="card-text text-muted mb-3">
@@ -78,7 +78,7 @@
                                         <% for(let review of data.reviews) { %>
                                             <div class="card col-5 ms-3 mb-3 shadow-sm border-light">
                                                 <div class="card-body">
-                                                    <h5 class="card-title fw-semibold">@<%= review.author.username %></h5>
+                                                     <h5 class="card-title fw-semibold">@<%= review.author?.username || "anonymous" %></h5>
                                                     <p class="card-text mb-1">
                                                         <%= review.comment %>
                                                     </p>

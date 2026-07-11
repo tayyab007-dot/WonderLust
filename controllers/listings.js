@@ -1,0 +1,67 @@
+const Listing = require("../models/listing.js");
+
+// Index Route Logic
+module.exports.index = async (req, res) => {
+    const listings = await Listing.find({});
+    res.render("listings/index.ejs", { data: listings });
+};
+
+// Render New Form Logic
+module.exports.renderNewForm = (req, res) => {
+    res.render("listings/new.ejs");
+};
+
+// Show Listing Logic
+module.exports.showListing = async (req, res) => {
+    const listing = await Listing.findById(req.params.id)
+        .populate({ 
+            path: "reviews", 
+            populate: { path: "author" } 
+        })
+        .populate("owner");
+
+    if (!listing) {
+        req.flash("error", "Cannot find that listing!");
+        return res.redirect("/listings");   
+    }
+    res.render("listings/show.ejs", { data: listing });
+};
+
+// Create Listing Logic
+module.exports.createListing = async (req, res, next) => {
+    const newListing = new Listing(req.body.listing);
+    newListing.owner = req.user._id;
+    await newListing.save();
+    req.flash("success", "Successfully created a new listing!");
+    res.redirect("/listings");
+};
+
+// Render Edit Form Logic
+module.exports.renderEditForm = async (req, res) => {
+    const listing = await Listing.findById(req.params.id);
+    if (!listing) {
+        req.flash("error", "Cannot find that listing!");
+        return res.redirect("/listings");
+    }
+    res.render("listings/edit.ejs", { listing });
+};
+
+// Update Listing Logic
+module.exports.updateListing = async (req, res) => {
+    const { id } = req.params;
+    
+    // Using findByIdAndUpdate as shown in your screenshot
+    await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+    
+    req.flash("success", "Listing Updated!");
+    res.redirect(`/listings/${id}`);
+};
+
+// Destroy Listing Logic
+module.exports.destroyListing = async (req, res) => {
+    const { id } = req.params;
+    let deletedListing = await Listing.findByIdAndDelete(id);
+    console.log(deletedListing);
+    req.flash("success", "Listing Deleted!");
+    res.redirect("/listings");
+};
