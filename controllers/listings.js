@@ -29,8 +29,14 @@ module.exports.showListing = async (req, res) => {
 
 // Create Listing Logic
 module.exports.createListing = async (req, res, next) => {
+    let url = req.file.path;
+    let filename = req.file.filename;
     const newListing = new Listing(req.body.listing);
     newListing.owner = req.user._id;
+    newListing.image = {
+        url: url,
+        filename: filename
+    };
     await newListing.save();
     req.flash("success", "Successfully created a new listing!");
     res.redirect("/listings");
