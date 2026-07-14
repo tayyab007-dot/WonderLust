@@ -42,6 +42,7 @@ module.exports.createListing = async (req, res, next) => {
     res.redirect("/listings");
 };
 
+
 // Render Edit Form Logic
 module.exports.renderEditForm = async (req, res) => {
     const listing = await Listing.findById(req.params.id);
@@ -49,19 +50,54 @@ module.exports.renderEditForm = async (req, res) => {
         req.flash("error", "Cannot find that listing!");
         return res.redirect("/listings");
     }
-    res.render("listings/edit.ejs", { listing });
+    
+    // Create an optimized thumbnail preview URL
+    let originalImageUrl = listing.image.url;
+    originalImageUrl = originalImageUrl.replace("/upload", "/upload/w_250");
+    
+    res.render("listings/edit.ejs", { listing, originalImageUrl });
 };
 
 // Update Listing Logic
 module.exports.updateListing = async (req, res) => {
     const { id } = req.params;
     
-    // Using findByIdAndUpdate as shown in your screenshot
-    await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+    // 1. Update text-based details first
+    let listing = await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+    
+    // 2. Check if the user uploaded a new file
+    if (typeof req.file !== "undefined") {
+        let url = req.file.path;
+        let filename = req.file.filename;
+        listing.image = { url, filename };
+        await listing.save();
+    }
     
     req.flash("success", "Listing Updated!");
     res.redirect(`/listings/${id}`);
 };
+
+
+// // Render Edit Form Logic
+// module.exports.renderEditForm = async (req, res) => {
+//     const listing = await Listing.findById(req.params.id);
+//     if (!listing) {
+//         req.flash("error", "Cannot find that listing!");
+//         return res.redirect("/listings");
+//     }
+//     res.render("listings/edit.ejs", { listing });
+// };
+
+// // Update Listing Logic
+// module.exports.updateListing = async (req, res) => {
+//     const { id } = req.params;
+    
+//     // Using findByIdAndUpdate as shown in your screenshot
+//     await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+    
+//     req.flash("success", "Listing Updated!");
+//     res.redirect(`/listings/${id}`);
+// };
 
 // Destroy Listing Logic
 module.exports.destroyListing = async (req, res) => {
