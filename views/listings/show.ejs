@@ -1,3 +1,6 @@
+<!-- Leaflet Map CSS CDN (Required to render map tiles correctly) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
 <% layout('layouts/boilerplate') %>
 
     <body>
@@ -37,6 +40,21 @@
                             </form>
                         </div>
                         <% } %>
+
+                        <hr />
+
+                        <!-- Interactive Map Display Section -->
+                        <div class="mb-4">
+                            <h4 class="fw-bold mb-3">Where you'll be</h4>
+                            <!-- We inject database variables into dataset-attributes for map.js to read safely -->
+                            <div id="map" 
+                                 style="height: 400px; width: 100%; border-radius: 12px; z-index: 1;" 
+                                 class="shadow-sm border"
+                                 data-coordinates="<%= JSON.stringify(data.geometry.coordinates) %>"
+                                 data-title="<%= data.title %>"
+                                 data-location="<%= data.location %>, <%= data.country %>">
+                            </div>
+                        </div>
 
                         <hr />
 
@@ -121,6 +139,12 @@
 
             </div>
         </div>
+
+        <!-- Leaflet Map JS Engine -->
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+        
+        <!-- Custom Client-Side Map Logic -->
+        <script src="/js/map.js"></script>
     </body>
 
     </html>

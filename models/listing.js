@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const Review = require('./review');
 
-
 const listingSchema = new Schema({
     title: {
         type: String,
@@ -32,6 +31,18 @@ const listingSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User"
     },
+    // Add this Geometry field for coordinates
+    geometry: {
+        type: {
+            type: String,
+            enum: ['Point'], // Must be 'Point'
+            required: true
+        },
+        coordinates: {
+            type: [Number], // [longitude, latitude]
+            required: true
+        }
+    }
 });
 
 listingSchema.post('findOneAndDelete', async function(doc) {
@@ -45,5 +56,4 @@ listingSchema.post('findOneAndDelete', async function(doc) {
 });
 
 const Listing = mongoose.model('Listing', listingSchema);
-
 module.exports = Listing;

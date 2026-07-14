@@ -28,15 +28,57 @@ module.exports.showListing = async (req, res) => {
 };
 
 // Create Listing Logic
+// Add node-fetch or use native global fetch (supported automatically in Node.js v18+)
+// If you are on Node.js v18+, global fetch works out of the box!
+
 module.exports.createListing = async (req, res, next) => {
     let url = req.file.path;
     let filename = req.file.filename;
     const newListing = new Listing(req.body.listing);
     newListing.owner = req.user._id;
-    newListing.image = {
-        url: url,
-        filename: filename
-    };
+    newListing.image = { url: url, filename: filename };
+
+    // ─── GEOCONVERSION LOGIC (FREE & NO-KEYS) ───
+    const queryAddress = `${req.body.listing.location}, ${req.body.listing.country}`;
+    
+    try {
+        // We fetch coordinates from OpenStreetMap's Nominatim API
+        // User-Agent header is required by Nominatim's free-use policy
+        const response = await fetch(
+            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(queryAddress)}&limit=1`,
+            {
+                headers: {
+                    'User-Agent': 'WanderLustApp_StudentProject'
+                }
+            }
+        );
+        const data = await response.json();
+
+        if (data && data.length > 0) {
+            // GeoJSON coordinates are stored as [longitude, latitude]
+            const lon = parseFloat(data[0].lon);
+            const lat = parseFloat(data[0].lat);
+            
+            newListing.geometry = {
+                type: "Point",
+                coordinates: [lon, lat]
+            };
+        } else {
+            // Fallback to coordinates [0, 0] or default city center if address isn't found
+            newListing.geometry = {
+                type: "Point",
+                coordinates: [0, 0] // Default fallback center
+            };
+        }
+    } catch (err) {
+        console.error("Geocoding Error: ", err);
+        // Ensure app doesn't crash on network failure, set a fallback
+        newListing.geometry = {
+            type: "Point",
+            coordinates: [0, 0]
+        };
+    }
+
     await newListing.save();
     req.flash("success", "Successfully created a new listing!");
     res.redirect("/listings");
