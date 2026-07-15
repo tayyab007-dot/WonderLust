@@ -1,41 +1,72 @@
-<nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="/"><i class="fa-regular fa-compass"></i></a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+<nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top border-bottom">
+  <div class="container-fluid px-md-5">
+    
+    <!-- Brand Logo -->
+    <a class="navbar-brand text-danger fs-4" href="/listings">
+      <i class="fa-regular fa-compass"></i>
+    </a>
+
+    <!-- Mobile Toggle Button (Visible on screens smaller than large) -->
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse  border-bottom" id="navbarNav">
-      <ul class="navbar-nav">
+
+    <!-- Collapsible Navbar Content -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      
+      <!-- Left Side: Links -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link" aria-current="page" href="/">Home</a>
+          <a class="nav-link fw-semibold text-dark" href="/listings">Explore</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/listings">listings</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/listings/new">New Listing</a>
-        </li>
-       
       </ul>
-    </div>
-    <div class="collapse navbar-collapse  border-bottom" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
+
+      <!-- Center: Airbnb-Style Rounded Search Bar -->
+      <div class="mx-auto my-2 my-lg-0" style="max-width: 380px; width: 100%;">
+        <form class="d-flex align-items-center bg-white border rounded-pill shadow-sm p-1" role="search" action="/listings" method="GET">
+          <input class="form-control border-0 bg-transparent py-1 ps-3 shadow-none text-muted" 
+                 style="font-size: 0.85rem;" 
+                 type="search" 
+                 placeholder="Search destinations" 
+                 name="search" 
+                 aria-label="Search">
+          <button class="btn btn-danger rounded-pill px-3 py-1.5 d-flex align-items-center gap-2 fw-semibold text-white shadow-sm hover-opacity-btn" 
+                  type="submit" 
+                  style="font-size: 0.82rem; background-color: #ff385c; border: none;">
+            <i class="fa-solid fa-magnifying-glass" style="font-size: 0.75rem;"></i>
+            <span>Search</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Right Side: User Controls -->
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-lg-2">
+        <li class="nav-item">
+          <a class="nav-link text-dark fw-semibold" href="/listings/new">Airbnb your home</a>
+        </li>
+        
         <% if(!currUser) { %>
-          
-        <li class="nav-item">
-          <a class="nav-link" aria-current="page" href="/login">Login</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/signup">Signup</a>
-        </li>
-        <% } else %>
-         <% if(currUser) { %>
-        <li class="nav-item">
-          <a class="nav-link" href="/logout">Logout</a>
-        </li>
+          <li class="nav-item">
+            <a class="nav-link text-dark" href="/login"><b>Login</b></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-dark" href="/signup"><b>Signup</b></a>
+          </li>
+        <% } else { %>
+          <li class="nav-item">
+            <a class="nav-link text-dark fw-semibold" href="/logout">Logout</a>
+          </li>
         <% } %>
-       
       </ul>
+
     </div>
   </div>
 </nav>
+
+<!-- Minimal layout helpers to enhance custom interactive button feel -->
+<style>
+  .hover-opacity-btn:hover {
+    opacity: 0.95;
+    background-color: #e61e4d !important;
+  }
+</style>
