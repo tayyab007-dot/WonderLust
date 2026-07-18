@@ -1,0 +1,177 @@
+<% layout('layouts/boilerplate') %>
+
+<!-- Inject Chart.js Core Library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<body>
+<div class="container my-4">
+    <h2 class="fw-bold text-dark mb-4">Personal Dashboard</h2>
+
+    <!-- Navigation Tab Pill Controls -->
+    <ul class="nav nav-pills mb-4 gap-2" id="dashboardTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active rounded-pill px-4 fw-semibold" id="trips-tab" data-bs-toggle="tab" data-bs-target="#trips-panel" type="button" role="tab">My Trips</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link rounded-pill px-4 fw-semibold" id="host-tab" data-bs-toggle="tab" data-bs-target="#host-panel" type="button" role="tab">Host Management</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link rounded-pill px-4 fw-semibold" id="analytics-tab" data-bs-toggle="tab" data-bs-target="#analytics-panel" type="button" role="tab">Earnings Overview</button>
+        </li>
+    </ul>
+
+    <div class="tab-content border p-4 rounded-4 bg-white shadow-sm" id="dashboardTabsContent">
+        
+        <!-- PANEL A: GUEST TRIPS PANEL -->
+        <div class="tab-pane fade show active" id="trips-panel" role="tabpanel">
+            <h4 class="fw-bold mb-3">Your Bookings & Trips</h4>
+            <% if(myTrips.length === 0) { %>
+                <p class="text-muted">You haven't locked in any vacation reservations yet. <a href="/listings" class="text-danger fw-semibold text-decoration-none">Explore stays</a></p>
+            <% } else { %>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light text-secondary">
+                            <tr>
+                                <th>Property</th>
+                                <th>Check-In</th>
+                                <th>Check-Out</th>
+                                <th>Total Cost</th>
+                                <th>Payment Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% myTrips.forEach(trip => { %>
+                                <tr>
+                                    <td>
+                                        <a href="/listings/<%= trip.listing?._id %>" class="fw-bold text-dark text-decoration-none"><%= trip.listing?.title || "Deleted Property" %></a>
+                                        <small class="text-muted d-block"><%= trip.listing?.location %></small>
+                                    </td>
+                                    <td><%= new Date(trip.startDate).toDateString() %></td>
+                                    <td><%= new Date(trip.endDate).toDateString() %></td>
+                                    <td class="fw-bold">$<%= trip.totalPrice.toLocaleString() %></td>
+                                    <td>
+                                        <span class="badge rounded-pill px-3 py-1.5 <%= trip.status === 'Paid' ? 'bg-success' : 'bg-warning text-dark' %>">
+                                            <%= trip.status %>
+                                        </span>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } %>
+        </div>
+
+        <!-- PANEL B: HOST MANAGEMENT PANEL -->
+        <div class="tab-pane fade" id="host-panel" role="tabpanel">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card p-3 bg-light border-0 rounded-3 shadow-sm mb-3 mb-md-0">
+                        <small class="text-muted fw-bold text-uppercase d-block mb-1">Active Listings Owned</small>
+                        <h3 class="fw-bold m-0 text-dark"><%= myProperties.length %></h3>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card p-3 bg-light border-0 rounded-3 shadow-sm">
+                        <small class="text-muted fw-bold text-uppercase d-block mb-1">Total Reservations Received</small>
+                        <h3 class="fw-bold m-0 text-dark"><%= analytics.totalBookings %></h3>
+                    </div>
+                </div>
+            </div>
+
+            <h4 class="fw-bold mb-3">Incoming Booking Requests</h4>
+            <% if(incomingReservations.length === 0) { %>
+                <p class="text-muted">No reservations have been placed against your active properties yet.</p>
+            <% } else { %>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light text-secondary">
+                            <tr>
+                                <th>Property Name</th>
+                                <th>Client / Guest</th>
+                                <th>Duration Window</th>
+                                <th>Gross Revenue</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% incomingReservations.forEach(resv => { %>
+                                <tr>
+                                    <td class="fw-bold text-dark"><%= resv.listing?.title %></td>
+                                    <td>@<%= resv.guest?.username %></td>
+                                    <td>
+                                        <small class="d-block fw-semibold"><%= new Date(resv.startDate).toLocaleDateString() %> to</small>
+                                        <small class="d-block text-muted"><%= new Date(resv.endDate).toLocaleDateString() %></small>
+                                    </td>
+                                    <td class="fw-bold text-success">$<%= resv.totalPrice.toLocaleString() %></td>
+                                    <td>
+                                        <span class="badge rounded-pill px-3 py-1.5 <%= resv.status === 'Paid' ? 'bg-success' : 'bg-warning text-dark' %>">
+                                            <%= resv.status %>
+                                        </span>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } %>
+        </div>
+
+        <!-- PANEL C: VISUAL FINANCIAL ANALYTICS PANEL -->
+        <div class="tab-pane fade" id="analytics-panel" role="tabpanel">
+            <div class="row align-items-center mb-4">
+                <div class="col-md-4">
+                    <h5 class="text-muted fw-semibold mb-1">Total Pipeline Business Value</h5>
+                    <h2 class="fw-bold text-dark mb-0">$<%= analytics.totalEarnings.toLocaleString() %></h2>
+                    <small class="text-muted">Combines both paid ledger balances and pending customer orders.</small>
+                </div>
+                <div class="col-md-8 mt-4 mt-md-0">
+                    <!-- Dynamic Data Capture Attributes for Javascript injection -->
+                    <div class="chart-container style-container" style="position: relative; height:250px; width:100%" id="revenueChartContainer" data-chart="<%= analytics.chartData %>">
+                        <canvas id="revenueLineChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Render Line Chart script configurations -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const ctx = document.getElementById('revenueLineChart').getContext('2d');
+        const rawDataString = document.getElementById('revenueChartContainer').getAttribute('data-chart');
+        const revenueDataset = JSON.parse(rawDataString);
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                    label: 'Gross Revenue Stream ($)',
+                    data: revenueDataset,
+                    borderColor: '#fe424d',
+                    backgroundColor: 'rgba(254, 66, 77, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.35,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#fe424d'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: '#f1f1f1' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    });
+</script>
+</body>

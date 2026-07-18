@@ -1,16 +1,19 @@
 <!-- Leaflet Map CSS CDN (Required to render map tiles correctly) -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<!-- Flatpickr Datepicker CSS Themes -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/material_blue.css">
 
 <% layout('layouts/boilerplate') %>
 
     <body>
         <div class="row mt-4">
-            <div class="col-md-6 offset-md-3">
+            <div class="col-md-8 offset-md-2">
                 <h3 class="fw-bold mb-3">
                     <%= data.title %>
                 </h3>
 
-                <div class="card listing-card shadow-sm h-100">
+                <div class="card listing-card shadow-sm border-0 mb-4">
                     
                     <!-- Dynamic Bootstrap 5 Photo Carousel Slider -->
                     <div id="listingCarousel" class="carousel slide card-img-top" data-bs-ride="carousel">
@@ -22,7 +25,7 @@
                             </div>
                         <% } %>
 
-                        <div class="carousel-inner" style="border-radius: 1rem 1rem 0 0;">
+                        <div class="carousel-inner" style="border-radius: 1rem;">
                             <% if(data.image && data.image.length > 0) { %>
                                 <% data.image.forEach((img, index) => { %>
                                     <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
@@ -48,127 +51,208 @@
                         <% } %>
                     </div>
 
-                    <div class="card-body px-0 py-3">
-                       <p class="card-text text-muted mb-3">Owned by: <i><%= data.owner?.username || "anonymous" %></i></p>
-                        
-                        <p class="card-text text-muted mb-3">
-                        <%= data.description %>
-                        </p>
+                    <!-- Split Layout Content Matrix Row -->
+                    <div class="row mt-4 px-1">
+                        <!-- Left Side: Property Information Column -->
+                        <div class="col-md-7">
+                            <p class="card-text text-muted mb-2">Owned by: <i><%= data.owner?.username || "anonymous" %></i></p>
+                            <span class="badge bg-dark rounded-pill mb-3 px-3 py-1.5"><%= data.category || "General" %></span>
+                            
+                            <p class="card-text text-secondary mb-4 leading-relaxed" style="text-align: justify;">
+                                <%= data.description %>
+                            </p>
+                            
+                            <p class="card-text mb-1">
+                                <span class="fw-bold text-dark">Price:</span> $<span id="base-nightly-price"><%= data.price %></span> / night
+                            </p>
+                            <p class="card-text mb-4">
+                                <span class="fw-bold text-dark">Location:</span> <%= data.location %>, <%= data.country %>
+                            </p>
 
-                        <p class="card-text mb-1">
-                            <span class="fw-bold text-dark">Price:</span> $<%= data.price.toLocaleString("en-US") %>
-                        </p>
-                        <p class="card-text">
-                            <span class="fw-bold text-dark">Location:</span>
-                            <%= data.location %>, <%= data.country %>
-                        </p>
-
-                        <% if(currUser && currUser._id.equals(data.owner._id)) { %>
-                        <div class="d-flex gap-3 mt-4">
-                            <a href="/listings/<%= data._id %>/edit" class="btn btn-dark px-4 py-2 fw-semibold">Edit Listing</a>
-
-                            <form action="/listings/<%= data._id %>?_method=DELETE" method="POST" class="m-0">
-                                <button type="submit" class="btn btn-danger px-4 py-2 fw-semibold">Delete Listing</button>
-                            </form>
-                        </div>
-                        <% } %>
-
-                        <hr />
-
-                        <!-- Interactive Map Display Section -->
-                        <div class="mb-4">
-                            <h4 class="fw-bold mb-3">Where you'll be</h4>
-                            <div id="map" 
-                                 style="height: 400px; width: 100%; border-radius: 12px; z-index: 1;" 
-                                 class="shadow-sm border"
-                                 data-coordinates="<%= JSON.stringify(data.geometry.coordinates) %>"
-                                 data-title="<%= data.title %>"
-                                 data-location="<%= data.location %>, <%= data.country %>">
-                            </div>
-                        </div>
-
-                        <hr />
-
-                        <div class="mb-5">
-                            <% if(currUser) { %>
-                            <h4 class="fw-bold mb-3">Leave a Review</h4>
-                            <form action="/listings/<%= data._id %>/reviews" method="POST" novalidate class="needs-validation">
-
-                                <div class="mb-3 mt-3">
-                                    <label class="form-label">Rating</label>
-                                    <fieldset class="starability-slot">
-                                        <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
-                                        
-                                        <input type="radio" id="first-rate1" name="review[rating]" value="1" />
-                                        <label for="first-rate1" title="Terrible">1 star</label>
-                                        
-                                        <input type="radio" id="first-rate2" name="review[rating]" value="2" />
-                                        <label for="first-rate2" title="Not good">2 stars</label>
-                                        
-                                        <input type="radio" id="first-rate3" name="review[rating]" value="3" />
-                                        <label for="first-rate3" title="Average">3 stars</label>
-                                        
-                                        <input type="radio" id="first-rate4" name="review[rating]" value="4" />
-                                        <label for="first-rate4" title="Very good">4 stars</label>
-                                        
-                                        <input type="radio" id="first-rate5" name="review[rating]" value="5" />
-                                        <label for="first-rate5" title="Amazing">5 stars</label>
-                                    </fieldset>
-                                </div>
-
-                                <div class="mb-3 mt-3">
-                                    <label for="comment" class="form-label">Comments</label>
-                                    <textarea name="review[comment]" id="comment" cols="30" rows="5" class="form-control" placeholder="Write your experience here..." required></textarea>
-                                    <div class="invalid-feedback">
-                                        Please add some comment for the review.
-                                    </div>
-                                </div>
-
-                                <button type="submit" class="btn btn-outline-dark px-4 py-2 fw-semibold">Submit</button>
-                            </form>
-
-                            <hr />
-
-                            <p><b>All Reviews</b></p>
-                            <div class="row">
-                                <% if (data.reviews.length===0) { %>
-                                    <div class="col-12 mb-3">
-                                        <p class="text-muted ms-1">No reviews yet.</p>
-                                    </div>
-                                    <% } else { %>
-                                        <% for(let review of data.reviews) { %>
-                                            <div class="card col-5 ms-3 mb-3 shadow-sm border-light">
-                                                <div class="card-body">
-                                                     <h5 class="card-title fw-semibold">@<%= review.author?.username || "anonymous" %></h5>
-                                                    <p class="card-text mb-1">
-                                                        <%= review.comment %>
-                                                    </p>
-
-                                                   <p class="starability-result" data-rating="<%= review.rating %>">
-                                                        Rated: <%= review.rating %> stars
-                                                    </p>
-                                                    
-                                                    <form action="/listings/<%= data._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST" class="mt-2 mb-1">
-                                                        <button class="btn btn-sm btn-dark px-3 py-1">Delete</button>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                            <% } %>
-                                        <% } %>
+                            <% if(currUser && currUser._id.equals(data.owner._id)) { %>
+                            <div class="d-flex gap-3 my-2">
+                                <a href="/listings/<%= data._id %>/edit" class="btn btn-dark px-4 py-2 fw-semibold">Edit Listing</a>
+                                <form action="/listings/<%= data._id %>?_method=DELETE" method="POST" class="m-0">
+                                    <button type="submit" class="btn btn-danger px-4 py-2 fw-semibold">Delete Listing</button>
+                                </form>
                             </div>
                             <% } %>
                         </div>
 
-                    </div>
-                </div>
+                        <!-- Right Side: Sticky Reservation Engine Panel Component Box -->
+                        <div class="col-md-5 mt-4 mt-md-0">
+                            <div class="card p-4 shadow-sm border rounded-4 sticky-top" style="top: 6rem; z-index: 5; background: #ffffff;">
+                                <h5 class="fw-bold text-dark mb-3">Reserve Property</h5>
+                                
+                                <% if(!currUser) { %>
+                                    <div class="alert alert-warning py-2 small mb-0" role="alert">
+                                        Please <a href="/login" class="alert-link">Sign In</a> to book this property.
+                                    </div>
+                                <% } else { %>
+                                    <form action="/listings/<%= data._id %>/bookings" method="POST" class="needs-validation" novalidate>
+                                        <div class="mb-3">
+                                            <label class="form-label small fw-bold text-muted mb-1">Check-In Date</label>
+                                            <input type="text" id="checkin-date" name="booking[startDate]" class="form-control bg-white" placeholder="Select Date" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label small fw-bold text-muted mb-1">Check-Out Date</label>
+                                            <input type="text" id="checkout-date" name="booking[endDate]" class="form-control bg-white" placeholder="Select Date" required>
+                                        </div>
 
+                                        <!-- Live Price Display Panel -->
+                                        <div id="invoice-breakdown" class="my-3 d-none border-top pt-3">
+                                            <div class="d-flex justify-content-between small text-muted mb-1">
+                                                <span>$<span id="invoice-rate"><%= data.price %></span> x <span id="invoice-days">0</span> nights</span>
+                                                <span>$<span id="invoice-subtotal">0</span></span>
+                                            </div>
+                                            <div class="d-flex justify-content-between fw-bold text-dark border-top pt-2 mt-2">
+                                                <span>Total Price</span>
+                                                <span>$<span id="invoice-total">0</span></span>
+                                            </div>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-danger w-100 py-2.5 fw-bold shadow-sm" style="background-color: #fe424d; border: none;">
+                                            Book Reservation
+                                        </button>
+                                    </form>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <!-- Interactive Map Display Section -->
+                    <div class="mb-4">
+                        <h4 class="fw-bold mb-3">Where you'll be</h4>
+                        <div id="map" 
+                             style="height: 400px; width: 100%; border-radius: 12px; z-index: 1;" 
+                             class="shadow-sm border"
+                             data-coordinates="<%= JSON.stringify(data.geometry.coordinates) %>"
+                             data-title="<%= data.title %>"
+                             data-location="<%= data.location %>, <%= data.country %>">
+                        </div>
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <!-- Review Framework -->
+                    <div class="mb-5">
+                        <% if(currUser) { %>
+                        <h4 class="fw-bold mb-3">Leave a Review</h4>
+                        <form action="/listings/<%= data._id %>/reviews" method="POST" novalidate class="needs-validation">
+                            <div class="mb-3 mt-3">
+                                <label class="form-label">Rating</label>
+                                <fieldset class="starability-slot">
+                                    <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
+                                    <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+                                    <label for="first-rate1" title="Terrible">1 star</label>
+                                    <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+                                    <label for="first-rate2" title="Not good">2 stars</label>
+                                    <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+                                    <label for="first-rate3" title="Average">3 stars</label>
+                                    <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+                                    <label for="first-rate4" title="Very good">4 stars</label>
+                                    <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+                                    <label for="first-rate5" title="Amazing">5 stars</label>
+                                </fieldset>
+                            </div>
+
+                            <div class="mb-3 mt-3">
+                                <label for="comment" class="form-label">Comments</label>
+                                <textarea name="review[comment]" id="comment" cols="30" rows="5" class="form-control" placeholder="Write your experience here..." required></textarea>
+                                <div class="invalid-feedback">Please add some comment for the review.</div>
+                            </div>
+
+                            <button type="submit" class="btn btn-outline-dark px-4 py-2 fw-semibold">Submit</button>
+                        </form>
+                        <hr class="my-4" />
+                        <% } %>
+
+                        <p class="fw-bold fs-5">All Reviews</p>
+                        <div class="row">
+                            <% if (data.reviews.length===0) { %>
+                                <div class="col-12 mb-3">
+                                    <p class="text-muted ms-1">No reviews yet.</p>
+                                </div>
+                            <% } else { %>
+                                <% for(let review of data.reviews) { %>
+                                    <div class="card col-md-5 ms-md-3 mb-3 shadow-sm border-light">
+                                        <div class="card-body">
+                                             <h5 class="card-title fw-semibold">@<%= review.author?.username || "anonymous" %></h5>
+                                            <p class="card-text mb-1"><%= review.comment %></p>
+                                            <p class="starability-result" data-rating="<%= review.rating %>">Rated: <%= review.rating %> stars</p>
+                                            <% if(currUser && currUser._id.equals(review.author?._id)) { %>
+                                                <form action="/listings/<%= data._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST" class="mt-2 mb-1">
+                                                    <button class="btn btn-sm btn-dark px-3 py-1">Delete</button>
+                                                </form>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                <% } %>
+                            <% } %>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
 
         <!-- Leaflet Map JS Engine -->
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+        <!-- Flatpickr Interactive Calendar Engine CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
         
         <!-- Custom Client-Side Map Logic -->
         <script src="/js/map.js"></script>
+
+        <!-- Script Logic for Calendar Generation & Live Invoicing Calculations -->
+        <script>
+            const pricePerNight = parseFloat(document.getElementById("base-nightly-price").innerText);
+            
+            // Generate Flatpickr calendar dates controls
+            const config = {
+                minDate: "today",
+                dateFormat: "Y-m-d",
+                onChange: calculateLiveInvoice
+            };
+
+            const checkinPicker = flatpickr("#checkin-date", config);
+            const checkoutPicker = flatpickr("#checkout-date", {
+                minDate: "today",
+                dateFormat: "Y-m-d",
+                onChange: calculateLiveInvoice
+            });
+
+            function calculateLiveInvoice() {
+                const checkinVal = document.getElementById("checkin-date").value;
+                const checkoutVal = document.getElementById("checkout-date").value;
+                const invoiceBox = document.getElementById("invoice-breakdown");
+
+                if(checkinVal && checkoutVal) {
+                    const d1 = new Date(checkinVal);
+                    const d2 = new Date(checkoutVal);
+                    
+                    // Prevent check-out dates extending behind check-in dates
+                    checkoutPicker.set("minDate", d1.fp_incr(1));
+
+                    if (d2 > d1) {
+                        const timeDiff = Math.abs(d2.getTime() - d1.getTime());
+                        const totalNights = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                        
+                        const subtotal = totalNights * pricePerNight;
+
+                        // Inject updates dynamically into UI elements
+                        document.getElementById("invoice-days").innerText = totalNights;
+                        document.getElementById("invoice-subtotal").innerText = subtotal.toLocaleString();
+                        document.getElementById("invoice-total").innerText = subtotal.toLocaleString();
+                        
+                        invoiceBox.classList.remove("d-none");
+                    } else {
+                        invoiceBox.classList.add("d-none");
+                    }
+                }
+            }
+        </script>
     </body>
 </html>
