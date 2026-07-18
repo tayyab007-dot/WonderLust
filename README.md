@@ -39,7 +39,7 @@ WanderLust is a production-ready, full-stack web application built following the
 
 ## ⚙️ Local Installation & Setup
 
-Follow these steps to run the project locally on your machine:
+Follow these steps to run the project locally on your device:
 
 1. **Clone the repository:**
    ```bash
