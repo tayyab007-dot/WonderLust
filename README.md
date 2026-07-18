@@ -17,7 +17,7 @@ WanderLust is a production-ready, full-stack web application built following the
 
 ### 🖼️ Cloud Media Pipeline & UI Optimization
 * **Cloudinary Cloud Hosting:** Uploads binary multipart form streams via **Multer** directly to **Cloudinary** cloud infrastructure.
-* **On-the-Fly Bandwidth Compression:** Utilizes Cloudinary's Transformation API to dynamically fetch optimized $250\text{px}$ low-resolution thumbnail previews on edit layouts, slashing page load times.
+* **On-the-Fly Bandwidth Compression:** Utilizes Cloudinary's Transformation API to dynamically fetch optimized $250\text{px}$ low-resolution thumbnail previews on edit layouts, slashing page load time.
 
 ### 🎨 Polished Airbnb-Style Frontend Experience
 * **Responsive Category Filtering Slider:** Features a horizontal overflow icon slider bar configured with smooth CSS transitions, Font Awesome vectors, and a client-side JavaScript chevron-arrow button engine.
