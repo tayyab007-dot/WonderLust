@@ -1,45 +1,47 @@
 # 🧭 WanderLust — Full-Stack Vacation Rental Marketplace
 
-WanderLust is a robust, production-grade full-stack web application designed following the server-side **MVC (Model-View-Controller)** architecture pattern. Modeled closely after Airbnb, this application enables users to discover, create, manage, and review premium vacation properties globally. It features secure user authentication, cloud-hosted image management, dynamic location geocoding, and interactive real-time mapping.
+WanderLust is a production-ready, full-stack web application built following the classic server-side **MVC (Model-View-Controller)** design pattern. Inspired by Airbnb, the platform allows users to explore, create, and manage premium property listings, submit dynamic star-rated reviews, and view geographic locations using fully open-source interactive mapping systems.
 
 ---
 
-## 🚀 Key Features
+## 🚀 Core Technical Features
 
-*   **Full CRUD Lifecycle:** Seamless capability to create, read, update, and delete property listings with automated server-side data validations.
-*   **Secure Authentication & Authorization:** Managed via Passport.js with strong middleware protection ensuring *only* explicit property owners can edit or delete their listings.
-*   **Cloud Media Storage & Optimization:** Multi-part binary image uploads streamed via Multer directly to Cloudinary, featuring on-the-fly thumbnail transformation for smooth edit page previews.
-*   **Interactive Mapping & Geocoding:** Zero-cost, privacy-first geocoding that dynamically converts text addresses (e.g., "Lahore, Pakistan") into GeoJSON Point coordinates via OpenStreetMap's Nominatim API, rendering interactive maps on the client-side with Leaflet.js.
-*   **Airbnb-Style UI/UX & Controls:** A fully responsive Bootstrap 5 interface complete with an overflow-scroll category filter bar with smooth client-side button navigation, dynamic inline tax-display switches, and star-rating review systems.
+### 🛠️ Backend Architecture & Restful Routing
+* **MVC Pattern Separation:** Developed using **Node.js** and **Express**, isolating application logic into modular controllers, Mongoose schemas, and clean RESTful route mappings.
+* **Authentication & Role-Based Authorization:** Powered by **Passport.js** (`passport-local`). Secure route-protection middlewares ensure that while any visitor can browse properties, only the explicit **authenticated owner** of a listing holds the rights to update or delete it.
+* **Asynchronous Error Handling & Validation:** Built with a centralized asynchronous error wrapper (`wrapAsync`) and custom **Joi** schema validation layers to catch malformed inputs before they hit the database.
+
+### 🗺️ Free Geocoding & Interactive Maps (No Credit Card Required)
+* **On-the-Fly Geocoding:** Leverages asynchronous backend connections to OpenStreetMap's **Nominatim API** to convert plain text location inputs (e.g., *"Lahore, Pakistan"*) into precise **GeoJSON Point coordinates** (`[longitude, latitude]`) instantly on listing creation.
+* **Leaflet.js Mapping Infrastructure:** Visualizes property pins dynamically on the listing details page using **Leaflet.js** and OpenStreetMap tile layers. Coordinates are securely injected via DOM data-attributes to prevent cross-site scripting (XSS) hazards.
+
+### 🖼️ Cloud Media Pipeline & UI Optimization
+* **Cloudinary Cloud Hosting:** Uploads binary multipart form streams via **Multer** directly to **Cloudinary** cloud infrastructure.
+* **On-the-Fly Bandwidth Compression:** Utilizes Cloudinary's Transformation API to dynamically fetch optimized $250\text{px}$ low-resolution thumbnail previews on edit layouts, slashing page load times.
+
+### 🎨 Polished Airbnb-Style Frontend Experience
+* **Responsive Category Filtering Slider:** Features a horizontal overflow icon slider bar configured with smooth CSS transitions, Font Awesome vectors, and a client-side JavaScript chevron-arrow button engine.
+* **Dynamic Tax Switch Input:** Includes an interactive, responsive toggle button that directly manipulates DOM visibility parameters to dynamically overlay tax breakdowns (+18% GST) inline without a full page refresh.
 
 ---
 
-## 🛠️ Tech Stack & Architecture
+## 📂 Tech Stack
 
-*   **Backend Engine:** Node.js & Express.js (MVC Pattern)
-*   **View Layer:** EJS (Embedded JavaScript Templates)
-*   **Database:** MongoDB & Mongoose ODM (GeoJSON spatial schema architecture)
-*   **Authentication:** Passport.js (Local Strategy)
-*   **Media Pipeline:** Multer & Cloudinary Storage API
-*   **Mapping Suite:** Leaflet.js & OpenStreetMap (Nominatim API)
-*   **Styling & Icons:** Bootstrap 5, Font Awesome 6, and Starability CSS
+* **Backend Engine:** Node.js, Express.js
+* **Database Cluster:** MongoDB Atlas, Mongoose ODM
+* **Session Strategy:** Express-Session, Mongo Session Store (`connect-mongo`)
+* **Templates & View Presentation:** Embedded JavaScript (EJS), Bootstrap 5, Font Awesome
+* **Mapping Framework:** Leaflet.js, OpenStreetMap API, Nominatim Geocoder
+* **Media Handling:** Multer, Cloudinary API
+* **Form Validation:** Joi (Object schema validation)
 
 ---
 
-## 📂 Project Structure
+## ⚙️ Local Installation & Setup
 
-```text
-MAJORPROJECT/
-├── controllers/     # Core application logic & API behavior
-├── models/          # Mongoose relational schemas (Listing, Review, User)
-├── routes/          # Express RESTful route mapping definition arrays
-├── views/           # EJS presentation layout templates
-│   ├── includes/    # Reusable partial components (Navbar, Footer, Flash alerts)
-│   ├── layouts/     # Global boilerplate structural wrappers
-│   └── listings/    # Template views for index, show, new, and edit states
-├── public/          # Static frontend directory resources
-│   ├── css/         # Global template stylesheets
-│   └── js/          # Client-side execution scripts (map.js, validation handlers)
-├── utils/           # Centralized global async wrappers & error-handling modules
-├── .env             # Isolated application environment keys (Hidden from Git)
-└── app.js           # Server initialization portal configuration
+Follow these steps to run the project locally on your machine:
+
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/your-username/WanderLust.git](https://github.com/your-username/WanderLust.git)
+   cd WanderLust
