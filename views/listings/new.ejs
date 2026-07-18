@@ -1,75 +1,84 @@
 <% layout('layouts/boilerplate') %>
 
-    <body>
-        <br>
+<body>
+    <br>
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h3 class="fw-bold mb-3">Create New Listing</h3>
 
-        <div class="row">
-            <div class="col-md-6 offset-md-3">
-                <h3>Create a New Listing</h3>
+            <form action="/listings" method="POST" novalidate class="needs-validation" enctype="multipart/form-data">
+                
+                <div class="mb-3">
+                    <label class="form-label fw-semibold" for="title">Listing Title</label>
+                    <input type="text" placeholder="Add a catchy title" id="title" name="listing[title]" class="form-control" required>
+                    <div class="valid-feedback">Looks good!</div>
+                    <div class="invalid-feedback">Please provide a title.</div>
+                </div>
 
-                <br>
-                <form action="/listings" method="POST" novalidate class="needs-validation" enctype="multipart/form-data">
-                    <div class="mb-3">
-                        <label class="form-label mb-3" for="title">Listing Title:</label>
-                        <input type="text" placeholder="Add a cathy title" id="title" name="listing[title]"
-                            class="form-control" required>
-                        <div class="valid-feedback">
-                            Looks good!
-                        </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold" for="description">Description</label>
+                    <textarea placeholder="Tell guests about your property..." id="description" name="listing[description]" class="form-control" rows="4" required></textarea>
+                    <div class="valid-feedback">Looks good!</div>
+                    <div class="invalid-feedback">Please provide a description.</div>
+                </div>
+
+                <div class="row">
+                    <!-- Category Dropdown Input -->
+                    <div class="mb-3 col-md-12">
+                        <label class="form-label fw-semibold" for="category">Category Type</label>
+                        <select id="category" name="listing[category]" class="form-select py-2" required>
+                            <option value="" disabled selected>Select a category</option>
+                            <option value="Trending">Trending</option>
+                            <option value="Rooms">Rooms</option>
+                            <option value="Iconic cities">Iconic cities</option>
+                            <option value="Mountains">Mountains</option>
+                            <option value="Castles">Castles</option>
+                            <option value="Amazing pools">Amazing pools</option>
+                            <option value="Camping">Camping</option>
+                            <option value="Farms">Farms</option>
+                            <option value="Arctic">Arctic</option>
+                            <option value="Beachfront">Beachfront</option>
+                            <option value="Cabins">Cabins</option>
+                        </select>
+                        <div class="invalid-feedback">Please select a category segment.</div>
                     </div>
+                </div>
 
-                    <div class="mb-3">
-                        <label class="form-label mb-3" for="description">Description:</label>
-                        <textarea placeholder="Description" id="description" name="listing[description]"
-                            class="form-control" required></textarea>
-                        <div class="invalid-feedback">
-                            Please provide a description for your listing.
-                        </div>
+                <div class="row">
+                    <div class="mb-3 col-md-4">
+                        <label class="form-label fw-semibold" for="price">Price per night</label>
+                        <input type="number" placeholder="100" id="price" name="listing[price]" class="form-control" required>
+                        <div class="valid-feedback">Looks good!</div>
+                        <div class="invalid-feedback">Please provide a valid price.</div>
+                    </div>
+                    <div class="mb-3 col-md-8">
+                        <label class="form-label fw-semibold" for="location">Location</label>
+                        <input type="text" placeholder="e.g., Downtown Malibu" id="location" name="listing[location]" class="form-control" required>
+                        <div class="valid-feedback">Looks good!</div>
+                        <div class="invalid-feedback">Please provide the location.</div>
+                    </div>
+                </div>
 
-                        <div class="row">
-                            <div class="mb-3 col-md-4">
-                                <label class="form-label" for="price">Price:</label>
-                                <input type="number" placeholder="$1200" id="price" name="listing[price]"
-                                    class="form-control" required>
-                                <div class="invalid-feedback">
-                                    Please provide a price for your listing.
-                                </div>
-                            </div>
-                            <div class="mb-3 col-md-8">
-                                <label class="form-label" for="location">Location:</label>
-                                <input type="text" placeholder="New York" id="location" name="listing[location]"
-                                    class="form-control" required>
-                                <div class="invalid-feedback">
-                                    Please provide a location for your listing.
-                                </div>
-                            </div>
-                        </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold" for="country">Country</label>
+                    <input type="text" placeholder="United States" id="country" name="listing[country]" class="form-control" required>
+                    <div class="valid-feedback">Looks good!</div>
+                    <div class="invalid-feedback">Please provide the country.</div>
+                </div>
 
-                        <div class="row">
-                            <div class="mb-3 col-md-6">
-                                <label class="form-label" for="country">Country:</label>
-                                <input type="text" placeholder="Country" id="country" name="listing[country]"
-                                    class="form-control" required>
-                                <div class="invalid-feedback">
-                                    Please provide a country for your listing.
-                                </div>
-                            </div>
-                           
-                             <div class="mb-3 col-md-6">
-                                <label class="form-label" for="image">Upload Listing Image</label>
-                                <input type="hidden" name="listing[image][filename]" value="listingimage">
-                                <input type="file" id="image" name="listing[image]"
-                                    class="form-control" required>
-                                <div class="invalid-feedback">Please provide an image URL.</div>
-                            </div>
-                        </div>
+                <div class="mb-4">
+                    <label class="form-label fw-semibold" for="image">Upload Listing Images</label>
+                    <input type="file" id="image" name="listing[image]" class="form-control py-2" multiple required>
+                    <div class="invalid-feedback">Please upload at least one image for your property.</div>
+                    <div class="form-text text-muted" style="font-size: 0.72rem;">Select multiple photos to show off rooms and amenities.</div>
+                </div>
 
-                        <br>
-                        <button class="btn  mb-3  add-btn" type="submit">Add</button>
-                </form>
-            </div>
+                <div class="d-grid gap-2 mt-4">
+                    <button class="btn btn-danger py-2 fw-bold shadow-sm" type="submit">Create Listing</button>
+                </div>
+            </form>
         </div>
-        </div>
-    </body>
-
-    </html>
+    </div>
+    <br><br>
+</body>
+</html>

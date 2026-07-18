@@ -164,3 +164,152 @@ footer{
 .row.mt-4 {
     margin-bottom: 4rem; /* Adds safe breathing room above the footer */
 }
+
+
+/* ==========================================================================
+   AIRBNB-STYLE CATEGORY ICON FILTERS & ACTIONS ROW
+   ========================================================================== */
+
+.main-listings-container {
+    margin-top: 0.5rem !important;
+    margin-bottom: 2rem !important;
+}
+
+.top-action-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+    padding: 0;
+}
+
+.filters-wrapper {
+    width: 75%;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+#filters {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    align-items: center;
+    padding: 0.25rem 0;
+    gap: 1.25rem;
+    scrollbar-width: none; /* Firefox support */
+    scroll-behavior: smooth;
+    width: 100%;
+}
+
+#filters::-webkit-scrollbar {
+    display: none; /* Safari/Chrome support */
+}
+
+.filter-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.filter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    opacity: 0.6;
+    transition: 0.2s ease;
+    cursor: pointer;
+    min-width: 5.2rem;
+    border-bottom: 2px solid transparent;
+}
+
+.filter:hover, 
+.filter.active-filter {
+    opacity: 1;
+    border-bottom: 2px solid #222222;
+}
+
+.filter i {
+    font-size: 1.25rem;
+    margin-bottom: 0.4rem;
+    color: #222222;
+}
+
+.filter p {
+    font-size: 0.68rem;
+    font-weight: 500;
+    margin: 0;
+    color: #222222;
+    white-space: nowrap;
+}
+
+.scroll-next-btn {
+    position: absolute;
+    right: -10px;
+    background: #ffffff;
+    border: 1px solid #b0b0b0;
+    border-radius: 50%;
+    width: 1.85rem;
+    height: 1.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.12);
+    cursor: pointer;
+    z-index: 10;
+    transition: 0.2s ease;
+}
+
+.scroll-next-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.16);
+    border-color: #222222;
+}
+
+.scroll-next-btn i {
+    font-size: 0.75rem;
+    color: #222222;
+}
+
+.tax-toggle-wrapper {
+    width: 25%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.tax-toggle {
+    border: 1px solid #b0b0b0;
+    border-radius: 0.75rem;
+    height: 2.75rem;
+    padding: 0 0.85rem;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    background: #ffffff;
+    width: 15rem; 
+}
+
+.tax-toggle label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+}
+
+.tax-toggle .form-check-input {
+    width: 2rem;
+    height: 1.05rem;
+    cursor: pointer;
+}
+
+.tax-info {
+    display: none;
+    color: #717171;
+    font-size: 0.85rem;
+    font-weight: 400;
+}

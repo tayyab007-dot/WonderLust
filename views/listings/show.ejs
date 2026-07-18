@@ -11,8 +11,42 @@
                 </h3>
 
                 <div class="card listing-card shadow-sm h-100">
-                    <img src="<%= data.image.url %>" class="card-img-top" alt="Listing Image"
-                        style="height: 30rem; object-fit: cover;">
+                    
+                    <!-- Dynamic Bootstrap 5 Photo Carousel Slider -->
+                    <div id="listingCarousel" class="carousel slide card-img-top" data-bs-ride="carousel">
+                        <% if(data.image && data.image.length > 1) { %>
+                            <div class="carousel-indicators">
+                                <% data.image.forEach((img, index) => { %>
+                                    <button type="button" data-bs-target="#listingCarousel" data-bs-slide-to="<%= index %>" class="<%= index === 0 ? 'active' : '' %>" aria-current="<%= index === 0 ? 'true' : 'false' %>"></button>
+                                <% }) %>
+                            </div>
+                        <% } %>
+
+                        <div class="carousel-inner" style="border-radius: 1rem 1rem 0 0;">
+                            <% if(data.image && data.image.length > 0) { %>
+                                <% data.image.forEach((img, index) => { %>
+                                    <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                                        <img src="<%= img.url %>" class="d-block w-100" alt="Listing Image" style="height: 30rem; object-fit: cover;">
+                                    </div>
+                                <% }) %>
+                            <% } else { %>
+                                <div class="carousel-item active">
+                                    <img src="/images/placeholder.jpeg" class="d-block w-100" alt="Placeholder Image" style="height: 30rem; object-fit: cover;">
+                                </div>
+                            <% } %>
+                        </div>
+
+                        <% if(data.image && data.image.length > 1) { %>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#listingCarousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#listingCarousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        <% } %>
+                    </div>
 
                     <div class="card-body px-0 py-3">
                        <p class="card-text text-muted mb-3">Owned by: <i><%= data.owner?.username || "anonymous" %></i></p>
@@ -31,12 +65,10 @@
 
                         <% if(currUser && currUser._id.equals(data.owner._id)) { %>
                         <div class="d-flex gap-3 mt-4">
-                            <a href="/listings/<%= data._id %>/edit" class="btn btn-dark px-4 py-2 fw-semibold">Edit
-                                Listing</a>
+                            <a href="/listings/<%= data._id %>/edit" class="btn btn-dark px-4 py-2 fw-semibold">Edit Listing</a>
 
                             <form action="/listings/<%= data._id %>?_method=DELETE" method="POST" class="m-0">
-                                <button type="submit" class="btn btn-danger px-4 py-2 fw-semibold">Delete
-                                    Listing</button>
+                                <button type="submit" class="btn btn-danger px-4 py-2 fw-semibold">Delete Listing</button>
                             </form>
                         </div>
                         <% } %>
@@ -46,7 +78,6 @@
                         <!-- Interactive Map Display Section -->
                         <div class="mb-4">
                             <h4 class="fw-bold mb-3">Where you'll be</h4>
-                            <!-- We inject database variables into dataset-attributes for map.js to read safely -->
                             <div id="map" 
                                  style="height: 400px; width: 100%; border-radius: 12px; z-index: 1;" 
                                  class="shadow-sm border"
@@ -61,10 +92,8 @@
                         <div class="mb-5">
                             <% if(currUser) { %>
                             <h4 class="fw-bold mb-3">Leave a Review</h4>
-                            <form action="/listings/<%= data._id %>/reviews" method="POST" novalidate
-                                class="needs-validation">
+                            <form action="/listings/<%= data._id %>/reviews" method="POST" novalidate class="needs-validation">
 
-                                <!-- Starability Rating Element Only -->
                                 <div class="mb-3 mt-3">
                                     <label class="form-label">Rating</label>
                                     <fieldset class="starability-slot">
@@ -89,9 +118,7 @@
 
                                 <div class="mb-3 mt-3">
                                     <label for="comment" class="form-label">Comments</label>
-                                    <textarea name="review[comment]" id="comment" cols="30" rows="5"
-                                        class="form-control" placeholder="Write your experience here..."
-                                        required></textarea>
+                                    <textarea name="review[comment]" id="comment" cols="30" rows="5" class="form-control" placeholder="Write your experience here..." required></textarea>
                                     <div class="invalid-feedback">
                                         Please add some comment for the review.
                                     </div>
@@ -121,9 +148,7 @@
                                                         Rated: <%= review.rating %> stars
                                                     </p>
                                                     
-                                                    <form
-                                                        action="/listings/<%= data._id %>/reviews/<%= review._id %>?_method=DELETE"
-                                                        method="POST" class="mt-2 mb-1">
+                                                    <form action="/listings/<%= data._id %>/reviews/<%= review._id %>?_method=DELETE" method="POST" class="mt-2 mb-1">
                                                         <button class="btn btn-sm btn-dark px-3 py-1">Delete</button>
                                                     </form>
                                                 </div>
@@ -146,5 +171,4 @@
         <!-- Custom Client-Side Map Logic -->
         <script src="/js/map.js"></script>
     </body>
-
-    </html>
+</html>

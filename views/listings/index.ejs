@@ -1,153 +1,5 @@
 <% layout('layouts/boilerplate') %>
 
-<!-- Custom Highly Optimized Inline Styling -->
-<style>
-  /* 1. Tighten the overall page container constraints */
-  .main-listings-container {
-    margin-top: 0.5rem !important;
-    margin-bottom: 2rem !important;
-  }
-
-  /* 2. Setup the split 75% and 25% alignment container */
-  .top-action-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-bottom: 0.5rem;
-    padding: 0;
-  }
-
-  /* Left Section (75% Proportional Width Box) */
-  .filters-wrapper {
-    width: 75%;
-    position: relative;
-    display: flex;
-    align-items: center;
-  }
-
-  #filters {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    align-items: center;
-    padding: 0.25rem 0;
-    gap: 1.25rem;
-    scrollbar-width: none; /* Firefox browser support */
-    scroll-behavior: smooth;
-    width: 100%;
-  }
-
-  #filters::-webkit-scrollbar {
-    display: none; /* Safari/Chrome support */
-  }
-
-  /* PERFECT CENTERED ALIGNMENT STRUCTURE */
-  .filter {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    margin-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    opacity: 0.7;
-    transition: 0.2s ease;
-    cursor: pointer;
-    min-width: 5.2rem; /* Adjusted so text labels don't bunch up */
-    border-bottom: 2px solid transparent; /* Clean native selection underline foundation */
-  }
-
-  .filter:hover {
-    opacity: 1;
-    border-bottom: 2px solid #222222; /* Clean interactive line accent */
-  }
-
-  .filter i {
-    font-size: 1.25rem;
-    margin-bottom: 0.4rem;
-    color: #222222;
-  }
-
-  .filter p {
-    font-size: 0.68rem;
-    font-weight: 500;
-    margin: 0;
-    color: #222222;
-    white-space: nowrap;
-  }
-
-  /* The Arrow Sliding Controller Button */
-  .scroll-next-btn {
-    position: absolute;
-    right: -10px;
-    background: #ffffff;
-    border: 1px solid #b0b0b0;
-    border-radius: 50%;
-    width: 1.85rem;
-    height: 1.85rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.12);
-    cursor: pointer;
-    z-index: 10;
-    transition: 0.2s ease;
-  }
-
-  .scroll-next-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.16);
-    border-color: #222222;
-  }
-
-  .scroll-next-btn i {
-    font-size: 0.75rem;
-    color: #222222;
-  }
-
-  /* Right Section (25% Proportional Isolated Static Box) */
-  .tax-toggle-wrapper {
-    width: 25%;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-  }
-
-  .tax-toggle {
-    border: 1px solid #b0b0b0;
-    border-radius: 0.75rem;
-    height: 2.75rem;
-    padding: 0 0.85rem;
-    display: flex;
-    align-items: center;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    background: #ffffff;
-    width: 15rem; 
-  }
-
-  .tax-toggle label {
-    font-size: 0.72rem;
-    font-weight: 600;
-    cursor: pointer;
-    user-select: none;
-  }
-
-  .tax-toggle .form-check-input {
-    width: 2rem;
-    height: 1.05rem;
-    cursor: pointer;
-  }
-
-  /* Visibility parameters for the inline tax string */
-  .tax-info {
-    display: none;
-    color: #717171;
-    font-size: 0.85rem;
-    font-weight: 400;
-  }
-</style>
-
 <body>
   <div class="container main-listings-container">
 
@@ -157,53 +9,75 @@
       <!-- Left side (75%): Filters Bar Container + Next Arrow Button Controller -->
       <div class="filters-wrapper">
         <div id="filters">
-          <div class="filter">
-            <i class="fa-solid fa-fire"></i>
-            <p>Trending</p>
-          </div>
-          <div class="filter">
-            <i class="fa-solid fa-bed"></i>
-            <p>Rooms</p>
-          </div>
-          <div class="filter">
-            <i class="fa-solid fa-mountain-city"></i>
-            <p>Iconic cities</p>
-          </div>
-          <div class="filter">
-            <i class="fa-solid fa-mountain"></i>
-            <p>Mountains</p>
-          </div>
-          <div class="filter">
-            <i class="fa-solid fa-fort-awesome"></i>
-            <p>Castles</p>
-          </div>
-          <div class="filter">
-            <i class="fa-solid fa-person-swimming"></i>
-            <p>Amazing pools</p>
-          </div>
-          <div class="filter">
-            <i class="fa-solid fa-campground"></i>
-            <p>Camping</p>
-          </div>
-          <div class="filter">
-            <i class="fa-solid fa-cow"></i>
-            <p>Farms</p>
-          </div>
-          <div class="filter">
-            <i class="fa-solid fa-snowflake"></i>
-            <p>Arctic</p>
-          </div>
-          <div class="filter">
-            <i class="fa-solid fa-umbrella-beach"></i>
-            <p>Beachfront</p>
-          </div>
-          <div class="filter">
-            <i class="fa-solid fa-house-chimney-window"></i>
-            <p>Cabins</p>
-          </div>
+          
+          <a href="/listings?category=Trending" class="filter-link">
+            <div class="filter <%= activeCategory === 'Trending' ? 'active-filter' : '' %>">
+              <i class="fa-solid fa-fire"></i><p>Trending</p>
+            </div>
+          </a>
+
+          <a href="/listings?category=Rooms" class="filter-link">
+            <div class="filter <%= activeCategory === 'Rooms' ? 'active-filter' : '' %>">
+              <i class="fa-solid fa-bed"></i><p>Rooms</p>
+            </div>
+          </a>
+
+          <a href="/listings?category=Iconic cities" class="filter-link">
+            <div class="filter <%= activeCategory === 'Iconic cities' ? 'active-filter' : '' %>">
+              <i class="fa-solid fa-mountain-city"></i><p>Iconic cities</p>
+            </div>
+          </a>
+
+          <a href="/listings?category=Mountains" class="filter-link">
+            <div class="filter <%= activeCategory === 'Mountains' ? 'active-filter' : '' %>">
+              <i class="fa-solid fa-mountain"></i><p>Mountains</p>
+            </div>
+          </a>
+
+          <a href="/listings?category=Castles" class="filter-link">
+            <div class="filter <%= activeCategory === 'Castles' ? 'active-filter' : '' %>">
+              <i class="fa-solid fa-fort-awesome"></i><p>Castles</p>
+            </div>
+          </a>
+
+          <a href="/listings?category=Amazing pools" class="filter-link">
+            <div class="filter <%= activeCategory === 'Amazing pools' ? 'active-filter' : '' %>">
+              <i class="fa-solid fa-person-swimming"></i><p>Amazing pools</p>
+            </div>
+          </a>
+
+          <a href="/listings?category=Camping" class="filter-link">
+            <div class="filter <%= activeCategory === 'Camping' ? 'active-filter' : '' %>">
+              <i class="fa-solid fa-campground"></i><p>Camping</p>
+            </div>
+          </a>
+
+          <a href="/listings?category=Farms" class="filter-link">
+            <div class="filter <%= activeCategory === 'Farms' ? 'active-filter' : '' %>">
+              <i class="fa-solid fa-cow"></i><p>Farms</p>
+            </div>
+          </a>
+
+          <a href="/listings?category=Arctic" class="filter-link">
+            <div class="filter <%= activeCategory === 'Arctic' ? 'active-filter' : '' %>">
+              <i class="fa-solid fa-snowflake"></i><p>Arctic</p>
+            </div>
+          </a>
+
+          <a href="/listings?category=Beachfront" class="filter-link">
+            <div class="filter <%= activeCategory === 'Beachfront' ? 'active-filter' : '' %>">
+              <i class="fa-solid fa-umbrella-beach"></i><p>Beachfront</p>
+            </div>
+          </a>
+
+          <a href="/listings?category=Cabins" class="filter-link">
+            <div class="filter <%= activeCategory === 'Cabins' ? 'active-filter' : '' %>">
+              <i class="fa-solid fa-house-chimney-window"></i><p>Cabins</p>
+            </div>
+          </a>
+
         </div>
         
-        <!-- Next Filter Sliding Button Mechanism -->
         <button class="scroll-next-btn" id="slide-right-btn" aria-label="Next categories">
           <i class="fa-solid fa-chevron-right"></i>
         </button>
@@ -221,46 +95,53 @@
 
     </div>
 
-    <!-- Fallback raw filter container view tracking exclusively on small devices -->
+    <!-- Fallback filter row tracking exclusively on small devices -->
     <div class="d-flex d-md-none mb-2">
       <div id="filters" style="width: 100%;">
-        <div class="filter"><i class="fa-solid fa-fire"></i><p>Trending</p></div>
-        <div class="filter"><i class="fa-solid fa-bed"></i><p>Rooms</p></div>
-        <div class="filter"><i class="fa-solid fa-mountain-city"></i><p>Iconic</p></div>
-        <div class="filter"><i class="fa-solid fa-fort-awesome"></i><p>Castles</p></div>
+        <a href="/listings?category=Trending" class="filter-link"><div class="filter"><i class="fa-solid fa-fire"></i><p>Trending</p></div></a>
+        <a href="/listings?category=Rooms" class="filter-link"><div class="filter"><i class="fa-solid fa-bed"></i><p>Rooms</p></div></a>
+        <a href="/listings?category=Iconic cities" class="filter-link"><div class="filter"><i class="fa-solid fa-mountain-city"></i><p>Iconic</p></div></a>
+        <a href="/listings?category=Castles" class="filter-link"><div class="filter"><i class="fa-solid fa-fort-awesome"></i><p>Castles</p></div></a>
       </div>
     </div>
 
     <!-- Listings Grid Cards Container Matrix -->
     <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-3 g-4 mt-0">
         
-      <% for (let listing of data) { %>
-        <div class="col">
-          <a href="/listings/<%= listing._id %>" class="text-decoration-none text-dark">
-            <div class="card h-100 listing-card border-0 shadow-sm">
-              <img src="<%= listing.image.url %>" class="card-img-top listing-img" alt="listing image" style="height: 20rem; object-fit: cover; border-radius: 1rem;">
-              <div class="card-img-overlay"></div>
-              <div class="card-body px-1 py-3">
-                <b class="card-title bold text-dark d-block mb-1" style="font-size: 0.95rem;"><%= listing.title %></b> 
-                
-                <p class="card-text mb-1 text-muted" style="font-size: 0.85rem;">
-                  Price: <span class="text-dark fw-bold">$<%= listing.price.toLocaleString("en-US") %></span> / night
-                  <span class="tax-info ms-1 fw-semibold">&nbsp;+18% GST</span>
-                </p>
-                
-                <p class="card-text text-muted" style="font-size: 0.85rem;">Location: <%= listing.location %></p>
-              </div>
-            </div>
-          </a>
+      <% if(data.length === 0) { %>
+        <div class="col-12 text-center my-5">
+          <i class="fa-regular fa-folder-open text-muted fs-1 mb-3"></i>
+          <p class="text-muted">No listings found matching this criteria. Try exploring another filter!</p>
+          <a href="/listings" class="btn btn-sm btn-outline-dark rounded-pill px-4">Clear Filters</a>
         </div>
+      <% } else { %>
+        <% for (let listing of data) { %>
+          <div class="col">
+            <a href="/listings/<%= listing._id %>" class="text-decoration-none text-dark">
+              <div class="card h-100 listing-card border-0 shadow-sm">
+                <!-- FIXED LINE HERE: Points to index [0] inside your array -->
+                <img src="<%= listing.image && listing.image.length > 0 ? listing.image[0].url : '/images/placeholder.jpeg' %>" class="card-img-top listing-img" alt="listing image" style="height: 20rem; object-fit: cover; border-radius: 1rem;">
+                <div class="card-img-overlay"></div>
+                <div class="card-body px-1 py-3">
+                  <b class="card-title bold text-dark d-block mb-1" style="font-size: 0.95rem;"><%= listing.title %></b> 
+                  
+                  <p class="card-text mb-1 text-muted" style="font-size: 0.85rem;">
+                    Price: <span class="text-dark fw-bold">$<%= listing.price.toLocaleString("en-US") %></span> / night
+                    <span class="tax-info ms-1 fw-semibold">&nbsp;+18% GST</span>
+                  </p>
+                  
+                  <p class="card-text text-muted" style="font-size: 0.85rem;">Location: <%= listing.location %></p>
+                </div>
+              </div>
+            </a>
+          </div>
+        <% } %>
       <% } %>
   
     </div>
   </div>
 
-  <!-- Client-Side Click Animation Trigger Handlers Script -->
   <script>
-    // 1. Tax Display State Switch Event Listener Logic
     let taxSwitch = document.getElementById("flexSwitchCheckDefault");
     taxSwitch.addEventListener("click", () => {
       let taxInfo = document.getElementsByClassName("tax-info");
@@ -273,7 +154,6 @@
       }
     });
 
-    // 2. Next Filter Slider Arrow Animation Script Logic
     const nextSliderBtn = document.getElementById("slide-right-btn");
     const filtersScrollContainer = document.getElementById("filters");
 

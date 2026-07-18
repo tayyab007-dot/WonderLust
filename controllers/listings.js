@@ -1,9 +1,38 @@
+// controllers/listings.js
 const Listing = require("../models/listing.js");
 
-// Index Route Logic
+// Optimized Dynamic Index Route Logic (Search, Filter, Sort)
 module.exports.index = async (req, res) => {
-    const listings = await Listing.find({});
-    res.render("listings/index.ejs", { data: listings });
+    let { category, search, sort } = req.query;
+    let queryObj = {};
+
+    // 1. Category Filtering
+    if (category) {
+        queryObj.category = category;
+    }
+
+    // 2. Fuzzy Text Search across Title, Location, and Country fields
+    if (search) {
+        queryObj.$or = [
+            { title: { $regex: search, $options: "i" } },
+            { location: { $regex: search, $options: "i" } },
+            { country: { $regex: search, $options: "i" } }
+        ];
+    }
+
+    // 3. Execution of Query with Sorting Logic
+    let apiQuery = Listing.find(queryObj);
+
+    if (sort === "price_asc") {
+        apiQuery = apiQuery.sort({ price: 1 });
+    } else if (sort === "price_desc") {
+        apiQuery = apiQuery.sort({ price: -1 });
+    }
+
+    const listings = await apiQuery;
+    
+    // Pass the active filters back to the template to keep track of active states if needed
+    res.render("listings/index.ejs", { data: listings, activeCategory: category || "" });
 };
 
 // Render New Form Logic
@@ -27,63 +56,44 @@ module.exports.showListing = async (req, res) => {
     res.render("listings/show.ejs", { data: listing });
 };
 
-// Create Listing Logic
-// Add node-fetch or use native global fetch (supported automatically in Node.js v18+)
-// If you are on Node.js v18+, global fetch works out of the box!
-
+// Create Listing Logic with Category parsing
+// 1. Updated Create Listing Logic
 module.exports.createListing = async (req, res, next) => {
-    let url = req.file.path;
-    let filename = req.file.filename;
     const newListing = new Listing(req.body.listing);
     newListing.owner = req.user._id;
-    newListing.image = { url: url, filename: filename };
 
-    // ─── GEOCONVERSION LOGIC (FREE & NO-KEYS) ───
+    // CHANGED: Map through the array of uploaded files from Multer
+    if (req.files && req.files.length > 0) {
+        newListing.image = req.files.map(f => ({ url: f.path, filename: f.filename }));
+    }
+
+    if (!req.body.listing.category) {
+        newListing.category = "Trending";
+    }
+
     const queryAddress = `${req.body.listing.location}, ${req.body.listing.country}`;
-    
     try {
-        // We fetch coordinates from OpenStreetMap's Nominatim API
-        // User-Agent header is required by Nominatim's free-use policy
         const response = await fetch(
             `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(queryAddress)}&limit=1`,
-            {
-                headers: {
-                    'User-Agent': 'WanderLustApp_StudentProject'
-                }
-            }
+            { headers: { 'User-Agent': 'WanderLustApp_StudentProject' } }
         );
         const data = await response.json();
-
         if (data && data.length > 0) {
-            // GeoJSON coordinates are stored as [longitude, latitude]
             const lon = parseFloat(data[0].lon);
             const lat = parseFloat(data[0].lat);
-            
-            newListing.geometry = {
-                type: "Point",
-                coordinates: [lon, lat]
-            };
+            newListing.geometry = { type: "Point", coordinates: [lon, lat] };
         } else {
-            // Fallback to coordinates [0, 0] or default city center if address isn't found
-            newListing.geometry = {
-                type: "Point",
-                coordinates: [0, 0] // Default fallback center
-            };
+            newListing.geometry = { type: "Point", coordinates: [0, 0] };
         }
     } catch (err) {
         console.error("Geocoding Error: ", err);
-        // Ensure app doesn't crash on network failure, set a fallback
-        newListing.geometry = {
-            type: "Point",
-            coordinates: [0, 0]
-        };
+        newListing.geometry = { type: "Point", coordinates: [0, 0] };
     }
 
     await newListing.save();
     req.flash("success", "Successfully created a new listing!");
     res.redirect("/listings");
 };
-
 
 // Render Edit Form Logic
 module.exports.renderEditForm = async (req, res) => {
@@ -93,7 +103,6 @@ module.exports.renderEditForm = async (req, res) => {
         return res.redirect("/listings");
     }
     
-    // Create an optimized thumbnail preview URL
     let originalImageUrl = listing.image.url;
     originalImageUrl = originalImageUrl.replace("/upload", "/upload/w_250");
     
@@ -103,15 +112,12 @@ module.exports.renderEditForm = async (req, res) => {
 // Update Listing Logic
 module.exports.updateListing = async (req, res) => {
     const { id } = req.params;
-    
-    // 1. Update text-based details first
     let listing = await Listing.findByIdAndUpdate(id, { ...req.body.listing });
     
-    // 2. Check if the user uploaded a new file
-    if (typeof req.file !== "undefined") {
-        let url = req.file.path;
-        let filename = req.file.filename;
-        listing.image = { url, filename };
+    // CHANGED: If new files are uploaded, map them and push them into the array
+    if (req.files && req.files.length > 0) {
+        const newImages = req.files.map(f => ({ url: f.path, filename: f.filename }));
+        listing.image.push(...newImages); // Appends new images to existing gallery
         await listing.save();
     }
     
@@ -119,13 +125,10 @@ module.exports.updateListing = async (req, res) => {
     res.redirect(`/listings/${id}`);
 };
 
-
-
 // Destroy Listing Logic
 module.exports.destroyListing = async (req, res) => {
     const { id } = req.params;
     let deletedListing = await Listing.findByIdAndDelete(id);
-    console.log(deletedListing);
     req.flash("success", "Listing Deleted!");
     res.redirect("/listings");
 };

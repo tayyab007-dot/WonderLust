@@ -1,3 +1,4 @@
+// models/listing.js
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const Review = require('./review');
@@ -11,16 +12,24 @@ const listingSchema = new Schema({
         type: String,
         required: true
     },
-    image: {
-        url: String,
-        filename: String
-    },
+    // CHANGED: Converted from a single object to an Array of objects
+    image: [
+        {
+            url: String,
+            filename: String
+        }
+    ],
     price: {
         type: Number,
         required: true
     },
     location: String,
     country: String,
+    category: {
+        type: String,
+        enum: ["Trending", "Rooms", "Iconic cities", "Mountains", "Castles", "Amazing pools", "Camping", "Farms", "Arctic", "Beachfront", "Cabins"],
+        required: false
+    },
     reviews: [
         {
             type: Schema.Types.ObjectId,
@@ -31,15 +40,14 @@ const listingSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User"
     },
-    // Add this Geometry field for coordinates
     geometry: {
         type: {
             type: String,
-            enum: ['Point'], // Must be 'Point'
+            enum: ['Point'], 
             required: true
         },
         coordinates: {
-            type: [Number], // [longitude, latitude]
+            type: [Number], 
             required: true
         }
     }
