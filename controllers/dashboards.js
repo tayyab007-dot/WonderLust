@@ -1,12 +1,8 @@
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const Listing = require("../models/listing.js");
 const Booking = require("../models/booking.js");
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
-// const Listing = require("../models/listing.js");
-// const Booking = require("../models/booking.js");
-
-
-
-    // ... Rest of your dashboard controllers data population maps remain exactly the same ...
+// 1. Destructure both export handlers from the email utility module
+const { sendReceiptEmail, sendHostAlertEmail } = require("../utlls/email.js"); 
 
 module.exports.renderDashboard = async (req, res) => {
     const userId = req.user._id;
@@ -19,14 +15,34 @@ module.exports.renderDashboard = async (req, res) => {
             if (session.payment_status === "paid") {
                 const bookingId = session.metadata.bookingId;
                 
-                // Securely upgrade transaction authorization log records in Atlas
-                await Booking.findByIdAndUpdate(bookingId, { status: "Paid" });
+                // 2. FIXED: Nested populate pulls the property AND the owner data together
+                const updatedBooking = await Booking.findByIdAndUpdate(bookingId, { status: "Paid" })
+                    .populate({
+                        path: "listing",
+                        populate: {
+                            path: "owner" // This pulls the host's full model document record
+                        }
+                    });
+                
+                if (updatedBooking) {
+                    // 3. Dispatch the Guest Receipt Email
+                    await sendReceiptEmail(req.user.email, updatedBooking);
+                    
+                    // 4. Dispatch the Host Alert Notification Email if the owner has an email address
+                    if (updatedBooking.listing && updatedBooking.listing.owner && updatedBooking.listing.owner.email) {
+                        const hostEmail = updatedBooking.listing.owner.email;
+                        await sendHostAlertEmail(hostEmail, updatedBooking);
+                    }
+                }
+                
                 req.flash("success", "Payment successful! Your reservation is fully locked in.");
             }
         } catch (err) {
             console.error("Stripe Verification Error: ", err);
         }
     }
+
+    // ... The rest of your dashboard data arrays populations stay exactly the same ...
 
     // 1. Guest Data: Find bookings made by the current user
     const myTrips = await Booking.find({ guest: userId })

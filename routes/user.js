@@ -6,8 +6,9 @@ const passport = require("passport");
 const { saveRedirectUrl } = require("../middleware.js");
 const userController = require("../controllers/users.js");
 
+// FIXED: Added the leading forward slash here
 router
-  .route("signup")
+  .route("/signup")
   .get(userController.renderSignupForm)
   .post(wrapAsync(userController.signup));
 
