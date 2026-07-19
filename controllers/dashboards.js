@@ -1,8 +1,32 @@
 const Listing = require("../models/listing.js");
 const Booking = require("../models/booking.js");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+// const Listing = require("../models/listing.js");
+// const Booking = require("../models/booking.js");
+
+
+
+    // ... Rest of your dashboard controllers data population maps remain exactly the same ...
 
 module.exports.renderDashboard = async (req, res) => {
     const userId = req.user._id;
+    const { payment, session_id } = req.query;
+
+    // INTERCEPT STRIPE REDIRECTION TOKEN SIGNALS
+    if (payment === "success" && session_id) {
+        try {
+            const session = await stripe.checkout.sessions.retrieve(session_id);
+            if (session.payment_status === "paid") {
+                const bookingId = session.metadata.bookingId;
+                
+                // Securely upgrade transaction authorization log records in Atlas
+                await Booking.findByIdAndUpdate(bookingId, { status: "Paid" });
+                req.flash("success", "Payment successful! Your reservation is fully locked in.");
+            }
+        } catch (err) {
+            console.error("Stripe Verification Error: ", err);
+        }
+    }
 
     // 1. Guest Data: Find bookings made by the current user
     const myTrips = await Booking.find({ guest: userId })

@@ -19,6 +19,7 @@ const reviewsRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
 const bookingRouter = require("./routes/booking.js");
 const dashboardRouter = require("./routes/dashboard.js");
+const paymentRouter = require("./routes/payment.js");
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
 
@@ -73,6 +74,7 @@ app.use("/listings", listingsRouter);
 app.use("/listings/:id/reviews", reviewsRouter);
 app.use("/listings/:id/bookings", bookingRouter); // <-- MOVED DOWN HERE
 app.use("/dashboard", dashboardRouter);
+app.use("/payment", paymentRouter);  // 2. Mount statement under your dashboard entry definitions
 app.use("/", userRouter);
 
 app.all(/.*/, (req, res, next) => {

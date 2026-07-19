@@ -49,10 +49,22 @@
                                     <td><%= new Date(trip.startDate).toDateString() %></td>
                                     <td><%= new Date(trip.endDate).toDateString() %></td>
                                     <td class="fw-bold">$<%= trip.totalPrice.toLocaleString() %></td>
+                                    
+                                    <!-- STRIPE CHECKOUT INTEGRATED HERE -->
                                     <td>
-                                        <span class="badge rounded-pill px-3 py-1.5 <%= trip.status === 'Paid' ? 'bg-success' : 'bg-warning text-dark' %>">
-                                            <%= trip.status %>
-                                        </span>
+                                        <% if(trip.status === 'Paid') { %>
+                                            <span class="badge rounded-pill bg-success px-3 py-1.5">Paid</span>
+                                        <% } else { %>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="badge rounded-pill bg-warning text-dark px-3 py-1.5">Pending</span>
+                                                <!-- Stripe Checkout Submission Link Form -->
+                                                <form action="/payment/checkout-session/<%= trip._id %>" method="POST" class="m-0">
+                                                    <button type="submit" class="btn btn-sm btn-dark fw-bold rounded-pill px-3 py-1" style="font-size: 0.68rem;">
+                                                        Pay Now
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        <% } %>
                                     </td>
                                 </tr>
                             <% }) %>
