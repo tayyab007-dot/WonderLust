@@ -1,3 +1,4 @@
+// models/booking.js
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
@@ -35,7 +36,7 @@ const bookingSchema = new Schema({
     }
 });
 
-// Avoid overlapping reservation booking window updates on a database level
+// OPTIMIZATION: Compound index accelerates intersection queries running across active reservations
 bookingSchema.index({ listing: 1, startDate: 1, endDate: 1 });
 
 module.exports = mongoose.model("Booking", bookingSchema);
