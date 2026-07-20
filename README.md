@@ -1,47 +1,61 @@
-# 🧭 WanderLust — Full-Stack Vacation Rental Marketplace
+# WanderLust — Full-Stack Vacation Rental Marketplace
 
-WanderLust is a production-ready, full-stack web application built following the classic server-side **MVC (Model-View-Controller)** design pattern. Inspired by Airbnb, the platform allows users to explore, create, and manage premium property listings, submit dynamic star-rated reviews, and view geographic locations using fully open-source interactive mapping systems.
-
----
-
-## 🚀 Core Technical Features
-
-### 🛠️ Backend Architecture & Restful Routing
-* **MVC Pattern Separation:** Developed using **Node.js** and **Express**, isolating application logic into modular controllers, Mongoose schemas, and clean RESTful route mappings.
-* **Authentication & Role-Based Authorization:** Powered by **Passport.js** (`passport-local`). Secure route-protection middlewares ensure that while any visitor can browse properties, only the explicit **authenticated owner** of a listing holds the rights to update or delete it.
-* **Asynchronous Error Handling & Validation:** Built with a centralized asynchronous error wrapper (`wrapAsync`) and custom **Joi** schema validation layers to catch malformed inputs before they hit the database.
-
-### 🗺️ Free Geocoding & Interactive Maps (No Credit Card Required)
-* **On-the-Fly Geocoding:** Leverages asynchronous backend connections to OpenStreetMap's **Nominatim API** to convert plain text location inputs (e.g., *"Lahore, Pakistan"*) into precise **GeoJSON Point coordinates** (`[longitude, latitude]`) instantly on listing creation.
-* **Leaflet.js Mapping Infrastructure:** Visualizes property pins dynamically on the listing details page using **Leaflet.js** and OpenStreetMap tile layers. Coordinates are securely injected via DOM data-attributes to prevent cross-site scripting (XSS) hazards.
-
-### 🖼️ Cloud Media Pipeline & UI Optimization
-* **Cloudinary Cloud Hosting:** Uploads binary multipart form streams via **Multer** directly to **Cloudinary** cloud infrastructure.
-* **On-the-Fly Bandwidth Compression:** Utilizes Cloudinary's Transformation API to dynamically fetch optimized $250\text{px}$ low-resolution thumbnail previews on edit layouts, slashing page load time.
-
-### 🎨 Polished Airbnb-Style Frontend Experience
-* **Responsive Category Filtering Slider:** Features a horizontal overflow icon slider bar configured with smooth CSS transitions, Font Awesome vectors, and a client-side JavaScript chevron-arrow button engine.
-* **Dynamic Tax Switch Input:** Includes an interactive, responsive toggle button that directly manipulates DOM visibility parameters to dynamically overlay tax breakdowns (+18% GST) inline without a full page refresh.
+An advanced, production-ready Web2 accommodation booking platform modeled after modern vacation rental architectures. Developed as a final-year Bachelor of Science in Computer Science thesis project, this system implements secure third-party financial handshakes, dual-channel automated transactional notification pipelines, defensive server-side data validations, and strict access authorization routing.
 
 ---
 
-## 📂 Tech Stack
+## 🚀 Key System Features & Implementations
 
-* **Backend Engine:** Node.js, Express.js
-* **Database Cluster:** MongoDB Atlas, Mongoose ODM
-* **Session Strategy:** Express-Session, Mongo Session Store (`connect-mongo`)
-* **Templates & View Presentation:** Embedded JavaScript (EJS), Bootstrap 5, Font Awesome
-* **Mapping Framework:** Leaflet.js, OpenStreetMap API, Nominatim Geocoder
-* **Media Handling:** Multer, Cloudinary API
-* **Form Validation:** Joi (Object schema validation)
+### 💳 1. Secure Financial Gateway & Interceptor Pipeline (Stripe API)
+* **Token Handshake Engine:** Seamless integration with Stripe Checkout Session APIs, scaling server-side numeric currency normalization (converting fiat units to minor cent denominators) using isolated `.env` keys.
+* **Idempotent Re-Processing Guard:** Implements the Post-Redirect-Get (PRG) pattern in the dashboard router. This prevents duplicate transaction parsing, duplicate data writes, and email floods on browser refreshes or back-forward navigation actions.
+* **Privacy Ownership Enforcement:** Strict security evaluation checks that cross-reference active session IDs against Mongoose schema references, ensuring only the authenticated user who initiated the booking can trigger a payment verification update.
+
+### 📧 2. Automated Transactional Notification System (Nodemailer SMTP)
+* **Dual-Channel Routing:** Automatically orchestrates simultaneous HTML data dispatches upon verified payments.
+  * **Guest Delivery:** Transmits a clean, responsive HTML invoice and reservation summary directly to the client's inbox.
+  * **Host Notification:** Uses nested object population paths (`path: "listing", populate: { path: "owner" }`) to uncover the property creator's profile data and route an immediate earnings notification alert.
+* **Secure SMTP Relay:** Configured securely alongside Google's global mail distribution nodes via dedicated, cryptographically isolated 16-character Account App Passwords.
+
+### 🛡️ 3. Defensive Programming & Data Sanity Layer
+* **Date-Range Intersection Overlap Logic:** Native protection against multi-user double-bookings using non-overlapping evaluation queries ($startDate < newEnd \text{ AND } endDate > newStart$) across active "Pending" or "Paid" reservations.
+* **Retroactive & Chronological Guards:** Automatic validation filtering that blocks past/historical reservation attempts, enforces positive-integer stay durations, and flags malformed data parameters (`NaN` inputs).
+* **Joi Payload Enforcement:** Explicit object validation schemas restricting text payload boundaries (preventing database bloat attacks), establishing positive price ceilings, and validating standard URI strings.
+* **Object Existence Assertions:** Null-pointer middleware protections that intercept malformed or non-existent MongoDB ObjectIds before runtime reference execution crashes the Node.js process.
 
 ---
 
-## ⚙️ Local Installation & Setup
+## 🛠️ Tech Stack & Architecture
 
-Follow these steps to run the project locally on your device:
+* **Backend Environment:** Node.js, Express.js
+* **Database Layer:** MongoDB Atlas (Mongoose ODM)
+* **View Layer:** Embedded JavaScript (EJS Templates), Bootstrap 5
+* **Security & Authentication:** Passport.js (Local Strategy), Joi Schema Validators
+* **Media Handling:** Multer, Cloudinary API Storage
+* **Payment Processing:** Stripe Node SDK Engine
+* **Communication:** Nodemailer SMTP Transport Relay
 
-1. **Clone the repository:**
-   ```bash
-   git clone [https://github.com/your-username/WanderLust.git](https://github.com/your-username/WanderLust.git)
-   cd WanderLust
+---
+
+## 📂 Architecture Workspace Tree
+
+```text
+MAJORPROJECT/
+├── controllers/
+│   ├── bookings.js      # Handles price compiling, past-date guards, and overlap filters
+│   ├── dashboards.js    # Intercepts Stripe return signatures, triggers PRG, handles mail triggers
+│   └── listings.js      # Fuzzy search index algorithms and multi-image uploads
+├── models/
+│   ├── booking.js       # Core reservation schema utilizing compound performance indices
+│   ├── listing.js       # Property catalog schema with embedded location geometries
+│   └── user.js          # Authentication profiles managed via Passport-Local-Mongoose
+├── routes/
+│   ├── payment.js       # Initializes external Stripe checkout session configurations
+│   └── user.js          # Handles system signups, logins, and session lifecycles
+├── utlls/
+│   ├── email.js         # Configures Gmail SMTP transport channels and HTML layouts
+│   └── ExpressError.js  # Global application HTTP error handler classes
+├── middleware.js        # Holds administrative ownership checks and Joi payload execution blocks
+├── schema.js            # Master data definition constraints for listings and reviews
+├── .env                 # Encrypted environment configurations (API keys, credentials)
+└── app.js               # Application core mounting middleware pipelines
